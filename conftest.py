@@ -50,28 +50,16 @@ def login(browser):
     assert browser.current_url == "http://localhost:5173/app/home", "После входа c корректными данными не перенаправляет на страницу профиля"
 
 
+BASE_URL = "http://localhost:5000/api"
+
 @pytest.fixture(scope="session")
 def api_client():
-    base_url = "http://0.0.0.0:5000/api"
-
     class APIClient:
         def __init__(self, base_url):
             self.base_url = base_url
 
-        def get(self, endpoint, headers=None):
-            """Выполняет GET-запрос к указанному endpoint"""
-            return requests.get(f"{self.base_url}{endpoint}", headers=headers)
-
         def post(self, endpoint, data, headers=None):
-            """Выполняет POST-запрос к указанному endpoint"""
             return requests.post(f"{self.base_url}{endpoint}", json=data, headers=headers)
 
-        def put(self, endpoint, data, headers=None):
-            """Выполняет PUT-запрос к указанному endpoint"""
-            return requests.put(f"{self.base_url}{endpoint}", json=data, headers=headers)
+    return APIClient(BASE_URL)
 
-        def delete(self, endpoint, headers=None):
-            """Выполняет DELETE-запрос к указанному endpoint"""
-            return requests.delete(f"{self.base_url}{endpoint}", headers=headers)
-
-    return APIClient(base_url)
